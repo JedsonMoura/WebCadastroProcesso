@@ -1,0 +1,129 @@
+﻿@model IEnumerable<WebCadastroProcessos.Models.Processo>
+
+@{
+    ViewData["Title"] = "Index";
+}
+@* <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" /> *@
+
+<style>
+    body {
+        background-image: url('/path/to/your/background-image.jpg');
+        background-size: cover;
+        background-position: center;
+        color: white;
+    }
+
+    .table {
+        background-color: rgba(255, 255, 255, 0.8);
+        border-radius: 8px;
+    }
+
+        .table th, .table td {
+            vertical-align: middle;
+        }
+
+    .btn-custom {
+        margin-right: 5px;
+        color: white;
+        background-color: #007bff;
+    }
+
+        .btn-custom:hover {
+            background-color: #0056b3;
+        }
+
+    .pagination {
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+        .pagination a {
+            color: #007bff;
+            margin: 0 5px;
+        }
+
+</style>
+
+<form method="get" asp-action="Index" style="display: flex; align-items: center; flex-wrap: wrap;">
+    <div style="margin-right: 10px;">
+        <label for="npu">NPU:</label>
+        <input type="text" id="npu" name="npu" class="form-control" value="@ViewBag.CurrentNpu" placeholder="Pesquise por NPU"
+               style="width: 400px;" />
+    </div>
+
+    <div style="margin-right: 10px;">
+        <label for="dataCadastro">Data Cadastro:</label>
+        <input type="date" id="dataCadastro" name="dataCadastro" class="form-control" value="@ViewBag.CurrentDataCadastro"
+               style="width: 300px;" />
+    </div>
+
+    <div style="margin-right: 10px;">
+        <label for="uf">UF:</label>
+        <select id="uf" name="uf" class="form-control" style="width: 300px;">
+            <option value="">Selecione uma UF</option>
+            @foreach (var uf in ViewBag.Uf)
+            {
+                <option value="@uf">@uf</option>
+            }
+        </select>
+    </div>
+    <div style="margin-right: 10px;">
+        <button type="submit" class="btn btn-primary" style="height: 45px; width: 110px;">Pesquisar</button>
+    </div>
+
+    <div>
+        <a asp-action="Create" class="btn btn-secondary" style="height: 45px; width: 110px;">Cadastrar</a>
+    </div>
+</form>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.First().Npu)</th>
+            <th>@Html.DisplayNameFor(model => model.First().DataCadastro)</th>
+            <th>@Html.DisplayNameFor(model => model.First().Uf)</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+            @if (!Model.Any())
+            {
+            <tr>
+                <td colspan="4" class="text-center">Nenhum Processo Encontrado!</td>
+            </tr>
+            }
+            else
+            {
+                foreach (var item in Model)
+                {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.Npu)</td>
+                    <td>@Html.DisplayFor(modelItem => item.DataCadastro)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Uf)</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-custom">Atualizar</a>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-custom">Visualizar</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger" onclick="return confirm('Tem certeza que deseja excluir esse Processo?');">Excluir</a>
+                    </td>
+                </tr>
+                }
+            }
+    </tbody>
+</table>
+
+<div class="pagination">
+    @if (ViewBag.CurrentPage > 1)
+    {
+    <a asp-action="Index" asp-route-page="@(ViewBag.CurrentPage - 1)" class="btn btn-link">Anterior</a>
+    }
+
+    @for (int i = 1; i <= ViewBag.TotalPages; i++)
+    {
+    <a asp-action="Index" asp-route-page="@i" class="btn btn-link @(i == ViewBag.CurrentPage ? "active" : "")">@i</a>
+    }
+
+    @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+    {
+    <a asp-action="Index" asp-route-page="@(ViewBag.CurrentPage + 1)" class="btn btn-link">Próxima</a>
+    }
+</div>
